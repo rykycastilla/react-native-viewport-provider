@@ -1,0 +1,17 @@
+{
+  "name": "react-native-viewport-provider",
+  "version": "1.0.0",
+  "description": "A library to use viewport values within react-native",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "RykyCE",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "5.1.3"
+  },
+  "dependencies": {
+    "js-math-eval": "1.0.0"
+  }
+}

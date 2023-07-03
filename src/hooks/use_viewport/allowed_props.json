@@ -1,0 +1,20 @@
+[
+  "width",
+  "height",
+  "top",
+  "left",
+  "right",
+  "bottom",
+  "margin",
+  "marginTop",
+  "marginLeft",
+  "marginRight",
+  "marginBottom",
+  "border",
+  "borderTop",
+  "borderLeft",
+  "borderRight",
+  "borderBottom",
+  "borderRadius",
+  "fontSize"
+]
