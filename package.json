@@ -3,9 +3,19 @@
   "version": "1.0.0",
   "description": "A library to use viewport values within react-native",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rykycastilla/react-native-viewport-provider"
+  },
+  "keywords": [
+    "react",
+    "react-native",
+    "viewport"
+  ],
   "author": "RykyCE",
   "license": "MIT",
   "devDependencies": {
