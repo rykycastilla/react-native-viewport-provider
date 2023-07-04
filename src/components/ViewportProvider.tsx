@@ -17,17 +17,20 @@ function onLayout( event:LayoutChangeEvent ) {
 }
 
 function avoidRender() {
-  throw 'Unexpected ViewportProvider: Developer just can set one ViewportProvider. Please Fix it and reload the app'
+  throw 'Unexpected ViewportProvider: There can only be one ViewportProvider'
 }
 
-let init = false
+let provider = false
 
 interface ViewportProviderProps { children?:ReactElements }
 
 function ViewportProvider( props:ViewportProviderProps ): ReactElement {
+  // Mount Viewport
   useEffect( () => {
-    if( init ) { avoidRender() }
-    init = true
+    if( provider ) { avoidRender() }
+    provider = true
+    // UnMount Viewport
+    return () => { provider = false }
   }, [] )
   const { children } = props
   return (

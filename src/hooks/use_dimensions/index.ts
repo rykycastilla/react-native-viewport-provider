@@ -6,6 +6,7 @@ interface Layout {
   height: number
 }
 
+// React Hook: Return width and height of ViewportProvider
 function useDimensions(): Layout {
   const [ layout, setLayout ] = useState( '{"width":0,"height":0}' )
   useEffect( () => viewport.setLayoutSetter( setLayout ), [] )
