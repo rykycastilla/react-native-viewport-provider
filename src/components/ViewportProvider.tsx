@@ -1,6 +1,39 @@
 import { LayoutChangeEvent, StyleSheet, View } from 'react-native'
-import React, { ReactElement, useEffect } from 'react'
-import viewport from '../viewport'
+import React, { ReactElement, useState } from 'react'
+import ViewportContext, { initValue, Layout } from '../viewport_context'
+
+//  1.1.0
+// utilizar context API para valores de viewport
+// posibilidad de tener varios contextos (hasta aqui hay un mismo commit)
+// incluir stylesheet
+// permitir useViewport en los bordes en los bordes
+// incluir todas las expresiones regulares en un mismo fichero
+// incluir evento al cargar viwport
+// actualizar documentcion
+
+function onLayout( event:LayoutChangeEvent, setDimensions:React.Dispatch<React.SetStateAction<{width:number,height:number}>> ) {
+  const { width, height } = event.nativeEvent.layout
+  const layout: Layout = { width, height }
+  setDimensions( layout )
+}
+
+type ReactElements = ReactElement | ReactElement[]
+
+interface ViewportProviderProps { children?:ReactElements }
+
+const ViewportProvider = ( props:ViewportProviderProps ): ReactElement => {
+  const { children } = props
+  const [ dimensions, setDimensions ] = useState( initValue )
+  return (
+    <ViewportContext.Provider value={ dimensions }>
+      <View
+        onLayout={ ( event:LayoutChangeEvent ) => onLayout( event, setDimensions ) }
+        style={ styles.provider }>
+        { children }
+      </View>
+    </ViewportContext.Provider>
+  )
+}
 
 const styles = StyleSheet.create( {
   provider: {
@@ -9,37 +42,5 @@ const styles = StyleSheet.create( {
   }
 } )
 
-type ReactElements = ReactElement | ReactElement[]
-
-function onLayout( event:LayoutChangeEvent ) {
-  const { width, height } = event.nativeEvent.layout
-  viewport.resize( { width: width, height: height } )
-}
-
-function avoidRender() {
-  throw 'Unexpected ViewportProvider: There can only be one ViewportProvider'
-}
-
-let provider = false
-
-interface ViewportProviderProps { children?:ReactElements }
-
-function ViewportProvider( props:ViewportProviderProps ): ReactElement {
-  // Mount Viewport
-  useEffect( () => {
-    if( provider ) { avoidRender() }
-    provider = true
-    // UnMount Viewport
-    return () => { provider = false }
-  }, [] )
-  const { children } = props
-  return (
-    <View
-    onLayout={ ( event:LayoutChangeEvent ) => onLayout( event ) }
-    style={ styles.provider }>
-    { children }
-    </View>
-  )
-}
-
 export default ViewportProvider
+export { ViewportContext }

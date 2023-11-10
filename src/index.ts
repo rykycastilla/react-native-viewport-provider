@@ -1,7 +1,4 @@
-import useDimensions from './hooks/use_dimensions/index'
-import useViewport from './hooks/use_viewport/index'
-import ViewportProvider from './components/ViewportProvider'
-
-export { useDimensions, useViewport, ViewportProvider }
-
-export default ViewportProvider
+export { default as useDimensions } from './hooks/dimensions'
+export { default as useViewport } from './hooks/viewport'
+export { default, default as ViewportProvider } from './components/ViewportProvider'
+export { Layout } from './viewport_context'
