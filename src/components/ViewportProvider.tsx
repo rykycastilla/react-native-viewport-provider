@@ -1,25 +1,33 @@
 import { LayoutChangeEvent, StyleSheet, View } from 'react-native'
-import React, { ReactElement, useState } from 'react'
+import React, { Dispatch, ReactElement, SetStateAction, useMemo, useState } from 'react'
 import ViewportContext, { initValue, Layout } from '../viewport_context'
+import ViewportLoadEvent from '../classes/ViewportLoadEvent'
 
-function onLayout( event:LayoutChangeEvent, setDimensions:React.Dispatch<React.SetStateAction<{width:number,height:number}>> ) {
+type DimensionsSetter = Dispatch<SetStateAction<Layout>>
+
+function onLayout( event:LayoutChangeEvent, setDimensions:DimensionsSetter, loadEvent:ViewportLoadEvent ) {
   const { width, height } = event.nativeEvent.layout
   const layout: Layout = { width, height }
   setDimensions( layout )
+  loadEvent.trigger()
 }
 
-type ReactElements = ReactElement | ReactElement[]
-
-interface ViewportProviderProps { children?:ReactElements }
+interface ViewportProviderProps {
+  children?: ReactElement | ReactElement[],
+  onLoad?: () => void,
+}
 
 const ViewportProvider = ( props:ViewportProviderProps ): ReactElement => {
-  const { children } = props
+  const { children, onLoad } = props
   const [ dimensions, setDimensions ] = useState( initValue )
+  const loadEvent: ViewportLoadEvent = useMemo( () => {
+    return new ViewportLoadEvent( onLoad )
+  }, [] )
   return (
     <ViewportContext.Provider value={ dimensions }>
       <View
-        onLayout={ ( event:LayoutChangeEvent ) => onLayout( event, setDimensions ) }
-        style={ styles.provider }>
+        style={ styles.provider }
+        onLayout={ ( event:LayoutChangeEvent ) => { onLayout( event, setDimensions, loadEvent ) } }>
         { children }
       </View>
     </ViewportContext.Provider>
@@ -34,4 +42,3 @@ const styles = StyleSheet.create( {
 } )
 
 export default ViewportProvider
-export { ViewportContext }
