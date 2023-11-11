@@ -9,7 +9,7 @@ const initValue: Layout = {
   width: 0,
   height: 0,
 }
-const ViewportContext = createContext( initValue )
+const ViewportContext = createContext<Layout>( null )
 
 export default ViewportContext
 export { initValue, Layout }

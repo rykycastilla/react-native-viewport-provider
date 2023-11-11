@@ -1,5 +1,7 @@
 import _eval from 'js-math-eval'
 import allowedProps from './allowed_props.json'
+import HookType from '../../enums/HookType'
+import noViewportTemplate from '../../scripts/no_viewport_template'
 import resolveUnit from './resolve_unit'
 import toZero from './to_zero'
 import { useContext, useMemo } from 'react'
@@ -32,7 +34,10 @@ type StyleObject = StyleIndex & object
 
 // React Hook: Receives an style object with viewport units and parse it
 function useViewport( style:StyleObject ): object {
-  const layout: Layout = useContext( ViewportContext )
+  const layout: Layout | null = useContext( ViewportContext )
+  if( layout === null ) {  // Avoiding "out of viewport context"
+    noViewportTemplate( HookType.VIEWPORT )
+  }
   // Parsing style object
   const result: object = useMemo( (): object => {
     const keys: string[] = Object.keys( style ),
