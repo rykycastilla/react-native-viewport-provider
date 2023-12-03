@@ -24,7 +24,6 @@ function useViewport( style:unknown ): object | object[] {
     : [ style ] as object[]
   // Parsing styles
   const result: object[] = useMemo( () => {
-    console.log( 'building' )
     return parseStyleList( styleList, layout )
   }, [ layout, ...styleList ] )
   // Desestructuring array of single item
