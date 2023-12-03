@@ -1,64 +1,36 @@
-import _eval from 'js-math-eval'
-import allowedProps from './allowed_props.json'
 import HookType from '../../enums/HookType'
 import noViewportTemplate from '../../scripts/no_viewport_template'
-import resolveUnit from './resolve_unit'
-import toZero from './to_zero'
-import { useContext, useMemo } from 'react'
+import parseStyleList from './parse_style_list'
 import ViewportContext, { Layout } from '../../viewport_context'
+import { useContext, useMemo } from 'react'
 
-const percentagePattern = /^(([0-9]+)|([0-9]+[.][0-9]+))(%)$/
+type ObjectNoArray = object & { length?:never }
 
-// Verify if the prop is valid for viewport values
-function isAllowedProp( propKey:string ): boolean {
-  return allowedProps.includes( propKey )
-}
+// Overloads
+function useViewport( style:object[] ): object[]
+function useViewport( style:ObjectNoArray ): object
 
-// Analyze the value structure of the style property to parse its units
-function resolvePropValue( styleProp:string, layout:Layout ): number {
-  const valueUnits: string[] = styleProp.split( ' ' )
-  for( let _this = 0; _this < valueUnits.length; _this++ ) {
-    const unit: string = valueUnits[ _this ]
-    valueUnits[ _this ] = resolveUnit( unit, layout )  // Replacing by parsed values
-  }
-  const result: string = valueUnits.join( ' ' ),
-    resultNumber: number = _eval( result )  // Arithmetic work
-  return toZero( resultNumber )
-}
-
-interface StyleIndex {
-  [ key:string ]: unknown
-}
-
-type StyleObject = StyleIndex & object
-
-// React Hook: Receives an style object with viewport units and parse it
-function useViewport( style:StyleObject ): object {
+// React Hook: Accepts arrays and single objects to parse style
+function useViewport( style:unknown ): object | object[] {
+  // Getting layout data
   const layout: Layout | null = useContext( ViewportContext )
   if( layout === null ) {  // Avoiding "out of viewport context"
     noViewportTemplate( HookType.VIEWPORT )
   }
-  // Parsing style object
-  const result: object = useMemo( (): object => {
-    const keys: string[] = Object.keys( style ),
-      resultStyle: StyleIndex = {}
-    for( const key of keys ) {
-      const styleValue: unknown = style[ key ],
-        // Parsing conditions
-        isString: boolean = typeof styleValue === 'string',
-        _isAllowedProp: boolean = isAllowedProp( key ),
-        isPercentage: boolean = percentagePattern.test( String( styleValue ) )
-      if( isString && _isAllowedProp && !isPercentage ) {
-        const viewportValue = styleValue as string
-        resultStyle[ key ] = resolvePropValue( viewportValue, layout )  // Parsing value
-      }
-      else {
-        resultStyle[ key ] = styleValue  // By default
-      }
-    }
-    return resultStyle as object
-  }, [ layout ] )
-  return result
+  // Making array of single item
+  const isArray: boolean = Array.isArray( style )
+  const styleList = isArray
+    ? style as object[]
+    : [ style ] as object[]
+  // Parsing styles
+  const result: object[] = useMemo( () => {
+    console.log( 'building' )
+    return parseStyleList( styleList, layout )
+  }, [ layout, ...styleList ] )
+  // Desestructuring array of single item
+  if( isArray ) { return result }
+  const [ parsedStyle ] = result
+  return parsedStyle
 }
 
 export default useViewport
