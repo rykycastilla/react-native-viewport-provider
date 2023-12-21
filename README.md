@@ -112,6 +112,8 @@ It represents viewport dimensions and is returned by ```useDimensions```
  - Using React Context API to improve performance and stability
  - Support multiple ViewportProviders
  - Support borders and padding style properties
+ - Incluiding array syles
+ - Using `useVP` alias (instead of `useViewport`)
 
 > 1. If you try to use a viewport hook (useDimensions or useViewport) out of the Context of a ViewportProvider it will return the following exemption: `Executing hook out of Viewport Provider Context`
 > 2. To simulate a real viewport you must use **ViewportProvider** as the *parent component* for all the app content.
